@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+  <title>Reservation Directory</title>
+</head>
+
+<body>
+
+  <hr>
+    <h3 th:text="${roomNo}">Room No: </h3>
+  <hr>
+
+  <!-- Add a button -->
+  <a th:href="@{/rooms/reservations/showFormForAdd}"
+     class="btn btn-primary btn-sm mb-3">
+    Make Reservation
+  </a>
+
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th>Id</th>
+        <th>Customer</th>
+        <th>Check In</th>
+        <th>Check Out</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr th:each="tempRes : ${reservations}">
+
+        <td th:text="${tempRes.resId}" />
+        <td th:text="${tempRes.customer}" />
+        <td th:text="${tempRes.checkIn}" />
+        <td th:text="${tempRes.checkOut}" />
+
+        <td>
+          <!-- Add "update" button -->
+          <a th:href="@{/rooms/reservations/showFormForUpdate(resId=${tempRes.resId})}"
+             class="btn btn-info btn-sm">
+            Update
+          </a>
+
+          <!-- Add "cancel" button -->
+          <a th:href="@{/rooms/reservations/delete(resId=${tempRes.resId})}"
+             class="btn btn-danger btn-sm"
+             onclick="if (!(confirm('Are you sure you want to cancel this reservation?'))) return false">
+            Cancel
+          </a>
+
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+
+</body>
