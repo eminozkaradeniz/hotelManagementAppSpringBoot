@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 
 <head>
     <!-- Required meta tags -->
@@ -17,10 +17,20 @@
 <div class="container">
 
     <hr>
-    <h3>Room Directory</h3>
+        <h3 for="logout" style="float:left;">Room Directory</h3>
+
+        <!-- Add a logout button -->
+        <span style="display: flex; overflow:hidden; justify-content:right;">
+            <form name="logout" id="logout" th:action="@{/logout}" method="POST">
+                <input type="submit" value="Logout"/>
+            </form>
+        </span>
+
     <hr>
 
-    <!-- Add a button -->
+
+
+    <!-- Add room button -->
     <a th:href="@{/rooms/showFormForAdd}"
        class="btn btn-primary btn-sm mb-3">
         Add Room
@@ -73,6 +83,3 @@
 
 </body>
 </html>
-
-
-

@@ -1,0 +1,53 @@
+package com.hotelManagementApp.app.config;
+
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig {
+    
+    // add a reference to security data source
+    @Autowired
+    @Qualifier("securityDataSource")
+    private DataSource securityDataSource;
+
+    @Bean
+    public JdbcUserDetailsManager users() {
+        return new JdbcUserDetailsManager(securityDataSource);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/").permitAll()
+//                        .requestMatchers("/rooms/showForm*",
+//                                                    "/rooms/save",
+//                                                    "/rooms/delete").hasRole("ADMIN")
+//                        .requestMatchers("/rooms/reservations/**").hasRole("MANAGER")
+//                        .requestMatchers("/", "/rooms/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin((form) -> form
+                        .loginPage("/showLogin")
+                        .loginProcessingUrl("/authenticateTheUser")
+                        .permitAll()
+                )
+                .logout().permitAll()
+                .and()
+                .exceptionHandling().accessDeniedPage("/access-denied");
+
+        return http.build();
+    }
+
+}
