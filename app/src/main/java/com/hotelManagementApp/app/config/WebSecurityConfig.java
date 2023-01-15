@@ -28,14 +28,17 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        // Only Admin can add or delete a room, and update an existing one
+        // Only Manager can see reservation directory
+
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/").permitAll()
-//                        .requestMatchers("/rooms/showForm*",
-//                                                    "/rooms/save",
-//                                                    "/rooms/delete").hasRole("ADMIN")
-//                        .requestMatchers("/rooms/reservations/**").hasRole("MANAGER")
-//                        .requestMatchers("/", "/rooms/**").permitAll()
+                        .requestMatchers("/rooms/showFormFor*",
+                                                    "/rooms/save",
+                                                    "/rooms/delete").hasRole("ADMIN")
+                        .requestMatchers("/rooms/reservations/**").hasRole("MANAGER")
+                        .requestMatchers("/", "/home", "/rooms/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form

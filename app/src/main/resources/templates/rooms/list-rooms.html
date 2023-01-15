@@ -1,5 +1,7 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns="http://www.w3.org/1999/html">
 
 <head>
     <!-- Required meta tags -->
@@ -28,13 +30,20 @@
 
     <hr>
 
+    <div>
+        User: <span sec:authentication="name"></span>
+        <br>
+        Role(s): <span sec:authentication="principal.authorities"></span>
+        <br><br>
+    </div>
 
-
-    <!-- Add room button -->
-    <a th:href="@{/rooms/showFormForAdd}"
-       class="btn btn-primary btn-sm mb-3">
-        Add Room
-    </a>
+    <!-- Add room button for ROLE_ADMIN -->
+    <div sec:authorize="hasAnyRole('ROLE_ADMIN')">
+        <a th:href="@{/rooms/showFormForAdd}"
+           class="btn btn-primary btn-sm mb-3">
+            Add Room
+        </a>
+    </div>
 
     <table class="table table-bordered table-striped">
         <thead class="thead-dark">
@@ -54,24 +63,28 @@
             <td th:text="${tempRoom.price}" />
 
             <td>
-                <!-- Add "update" button -->
-                <a th:href="@{/rooms/showFormForUpdate(roomNo=${tempRoom.roomNo})}"
-                   class="btn btn-info btn-sm">
-                    Update
-                </a>
+                <div sec:authorize="hasAnyRole('ROLE_ADMIN')">
+                    <!-- Add "update" button for ROLE_ADMIN -->
+                    <a th:href="@{/rooms/showFormForUpdate(roomNo=${tempRoom.roomNo})}"
+                       class="btn btn-info btn-sm">
+                        Update
+                    </a>
 
-                <!-- Add "delete" button -->
-                <a th:href="@{/rooms/delete(roomNo=${tempRoom.roomNo})}"
-                   class="btn btn-danger btn-sm"
-                   onclick="if (!(confirm('Are you sure you want to delete this room?'))) return false">
-                    Delete
-                </a>
+                    <!-- Add "delete" button for ROLE_ADMIN -->
+                    <a th:href="@{/rooms/delete(roomNo=${tempRoom.roomNo})}"
+                       class="btn btn-danger btn-sm"
+                       onclick="if (!(confirm('Are you sure you want to delete this room?'))) return false">
+                        Delete
+                    </a>
+                </div>
 
-                <!-- Add "List Reservations" button -->
-                <a th:href="@{/rooms/reservations/list(roomNo=${tempRoom.roomNo})}"
-                   class="btn btn-secondary btn-sm">
-                    List Reservations
-                </a>
+                <div sec:authorize="hasAnyRole('ROLE_MANAGER')">
+                    <!-- Add "List Reservations" button for ROLE_MANAGER -->
+                    <a th:href="@{/rooms/reservations/list(roomNo=${tempRoom.roomNo})}"
+                       class="btn btn-secondary btn-sm">
+                        List Reservations
+                    </a>
+                </div>
 
             </td>
 
