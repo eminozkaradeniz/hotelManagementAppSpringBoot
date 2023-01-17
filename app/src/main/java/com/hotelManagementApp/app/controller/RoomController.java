@@ -2,6 +2,8 @@ package com.hotelManagementApp.app.controller;
 
 import com.hotelManagementApp.app.entity.Room;
 import com.hotelManagementApp.app.service.RoomService;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +21,27 @@ public class RoomController {
     }
 
     @GetMapping("/list")
-    public String listRooms(Model model) {
+    public String listRooms(Authentication authentication, Model model) {
 
-        // get rooms from db
-        List<Room> rooms = roomService.findAll();
+    	List<Room> rooms = null;
+
+    	// check if the user is an employee (there must be an easy way)
+    	if (authentication.getAuthorities().stream()
+    			.map(a -> a.toString())
+    			.anyMatch(s -> (s.equals("ROLE_EMPLOYEE")))) {
+    		
+    		// get available rooms
+    		rooms = roomService.findAll();
+    	} else {
+    		// get all rooms from db
+            rooms = roomService.findAll();
+    	}
 
         // add to the spring ui model
         model.addAttribute("rooms", rooms);
 
         return "rooms/list-rooms";
+
     }
 
     @GetMapping("/showFormForAdd")
