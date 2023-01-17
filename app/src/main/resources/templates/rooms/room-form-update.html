@@ -25,7 +25,8 @@
     <form action="#" th:action="@{/rooms/save}"
           th:object="${room}" method="POST">
 
-      <input type="text" th:field="*{roomNo}" readonly/>
+      <input type="text" th:field="*{roomNo}" readonly
+             class="form-control mb-4 col-4" placeholder="Room No"/>
       <input type="text" th:field="*{roomType}"
              class="form-control mb-4 col-4" placeholder="Room type">
       <input type="text" th:field="*{price}"

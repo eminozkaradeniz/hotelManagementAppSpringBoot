@@ -9,7 +9,7 @@ import java.sql.Date;
 public class Reservation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer resId;
 
@@ -23,7 +23,7 @@ public class Reservation {
     private Date checkOut;
 
     @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-                            CascadeType.DETACH, CascadeType.REFRESH})
+            CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "room_no", nullable = false)
     private Room room;
 
