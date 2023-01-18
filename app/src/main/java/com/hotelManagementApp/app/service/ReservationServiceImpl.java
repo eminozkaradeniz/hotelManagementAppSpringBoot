@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
-    private ReservationRepository reservationRepository;
+    private final ReservationRepository reservationRepository;
 
     public ReservationServiceImpl(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
@@ -31,10 +31,7 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation findById(int resId) {
         Optional<Reservation> optional = reservationRepository.findById(resId);
 
-        if (optional.isPresent()) {
-            return optional.get();
-        }
-        return null;
+        return optional.orElse(null);
     }
 
     @Override
