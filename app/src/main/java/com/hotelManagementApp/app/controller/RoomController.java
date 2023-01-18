@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/rooms")
 public class RoomController {
 
-    private RoomService roomService;
+    private final RoomService roomService;
 
     public RoomController(RoomService roomService) {
         this.roomService = roomService;
@@ -26,7 +26,7 @@ public class RoomController {
 
         // check if the user is an employee
         if (authentication.getAuthorities().stream()
-                .map(a -> a.toString())
+                .map(Object::toString)
                 .anyMatch(s -> (s.equals("ROLE_EMPLOYEE")))) {
 
             System.out.println("The User is an employee");
@@ -34,7 +34,7 @@ public class RoomController {
             // default searchDate
             Date out = Date.valueOf(LocalDate.now().plusDays(2));
 
-            model = getEmployeeSearchModel(out, model);
+            setEmployeeSearchModel(out, model);
 
         } else {
             // get all rooms from db
@@ -48,7 +48,7 @@ public class RoomController {
         return "rooms/list-rooms";
     }
 
-    private Model getEmployeeSearchModel(Date searchDate, Model theModel) {
+    private void setEmployeeSearchModel(Date searchDate, Model theModel) {
 
         // get available rooms based check in and check out day
         // check in date is current date for employee
@@ -66,14 +66,12 @@ public class RoomController {
         theModel.addAttribute("searchValueDate", searchDate);
 
         theModel.addAttribute("searchDate", searchDate);
-
-        return theModel;
     }
 
     @GetMapping("/searchAvailableRooms")
     public String searchAvailableRooms(@RequestParam("searchDate") Date searchDate, Model model) {
 
-        model = getEmployeeSearchModel(searchDate, model);
+        setEmployeeSearchModel(searchDate, model);
         return "rooms/list-rooms";
     }
 
