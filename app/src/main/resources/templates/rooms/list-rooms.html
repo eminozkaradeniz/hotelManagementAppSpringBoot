@@ -19,10 +19,10 @@
 <div class="container">
 
     <hr>
-        <h3 for="logout" style="float:left;">Room Directory</h3>
+    <h3 for="logout" style="float:left;">Room Directory</h3>
 
-        <!-- Add a logout button -->
-        <span style="display: flex; overflow:hidden; justify-content:right;">
+    <!-- Add a logout button -->
+    <span style="display: flex; overflow:hidden; justify-content:right;">
             <form name="logout" id="logout" th:action="@{/logout}" method="POST">
                 <input type="submit" value="Logout"/>
             </form>
@@ -34,8 +34,11 @@
         User: <span sec:authentication="name"></span>
         <br>
         Role(s): <span sec:authentication="principal.authorities"></span>
-        <br><br>
+        <br>
+        Current Date: <span th:text="${currDate}"></span>
     </div>
+
+    <hr>
 
     <!-- Add room button for ROLE_ADMIN -->
     <div sec:authorize="hasAnyRole('ROLE_ADMIN')">
@@ -43,6 +46,20 @@
            class="btn btn-primary btn-sm mb-3">
             Add Room
         </a>
+        <hr>
+    </div>
+
+    <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE')">
+        <form action="#" th:action="@{/rooms/searchAvailableRooms}" method="GET">
+            <div class="form-group">
+                <label for="searchButton">Check Out Date:
+                    <span><input type="date" id="searchDateInput" name="searchDate" th:min="${searchMinDate}" th:value="${searchValueDate}"/></span>
+                </label>
+                <button type="submit" id="searchButton" class="btn btn-info btn-sm">Search</button>
+            </div>
+        </form>
+
+        <hr>
     </div>
 
     <table class="table table-bordered table-striped">
@@ -83,6 +100,14 @@
                     <a th:href="@{/rooms/reservations/list(roomNo=${tempRoom.roomNo})}"
                        class="btn btn-secondary btn-sm">
                         List Reservations
+                    </a>
+                </div>
+
+                <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE')">
+                    <!-- Add "Make Reservation" button for ROLE_EMPLOYEE -->
+                    <a th:href="@{/rooms/reservations/showFormForAdd(roomNo=${tempRoom.roomNo})}"
+                       class="btn btn-info btn-sm">
+                        Make Reservation
                     </a>
                 </div>
 

@@ -2,12 +2,13 @@ package com.hotelManagementApp.app.controller;
 
 import com.hotelManagementApp.app.entity.Room;
 import com.hotelManagementApp.app.service.RoomService;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -23,25 +24,57 @@ public class RoomController {
     @GetMapping("/list")
     public String listRooms(Authentication authentication, Model model) {
 
-    	List<Room> rooms = null;
+        // check if the user is an employee
+        if (authentication.getAuthorities().stream()
+                .map(a -> a.toString())
+                .anyMatch(s -> (s.equals("ROLE_EMPLOYEE")))) {
 
-    	// check if the user is an employee (there must be an easy way)
-    	if (authentication.getAuthorities().stream()
-    			.map(a -> a.toString())
-    			.anyMatch(s -> (s.equals("ROLE_EMPLOYEE")))) {
-    		
-    		// get available rooms
-    		rooms = roomService.findAll();
-    	} else {
-    		// get all rooms from db
-            rooms = roomService.findAll();
-    	}
+            System.out.println("The User is an employee");
 
-        // add to the spring ui model
-        model.addAttribute("rooms", rooms);
+            // default searchDate
+            Date out = Date.valueOf(LocalDate.now().plusDays(2));
+
+            model = getEmployeeSearchModel(out, model);
+
+        } else {
+            // get all rooms from db
+            List<Room> rooms = roomService.findAll();
+
+            // add to the spring ui model
+            model.addAttribute("rooms", rooms);
+            model.addAttribute("currDate", LocalDate.now().toString());
+        }
 
         return "rooms/list-rooms";
+    }
 
+    private Model getEmployeeSearchModel(Date searchDate, Model theModel) {
+
+        // get available rooms based check in and check out day
+        // check in date is current date for employee
+        Date in = Date.valueOf(LocalDate.now());
+        System.out.println(searchDate.toString());
+        List<Room> availRooms = roomService.findAvail(in, searchDate);
+
+        // add to the spring ui model
+        theModel.addAttribute("rooms", availRooms);
+        theModel.addAttribute("currDate", LocalDate.now().toString());
+
+        Date searchMinDate = Date.valueOf(LocalDate.now().plusDays(1));
+
+        theModel.addAttribute("searchMinDate", searchMinDate);
+        theModel.addAttribute("searchValueDate", searchDate);
+
+        theModel.addAttribute("searchDate", searchDate);
+
+        return theModel;
+    }
+
+    @GetMapping("/searchAvailableRooms")
+    public String searchAvailableRooms(@RequestParam("searchDate") Date searchDate, Model model) {
+
+        model = getEmployeeSearchModel(searchDate, model);
+        return "rooms/list-rooms";
     }
 
     @GetMapping("/showFormForAdd")

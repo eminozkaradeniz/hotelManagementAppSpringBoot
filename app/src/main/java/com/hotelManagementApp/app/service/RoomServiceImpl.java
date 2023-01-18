@@ -1,21 +1,25 @@
 package com.hotelManagementApp.app.service;
 
+import com.hotelManagementApp.app.dao.ReservationRepository;
 import com.hotelManagementApp.app.dao.RoomRepository;
+import com.hotelManagementApp.app.entity.Reservation;
 import com.hotelManagementApp.app.entity.Room;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class RoomServiceImpl implements RoomService {
 
     private RoomRepository roomRepository;
+    private ReservationRepository reservationRepository;
 
-    @Autowired
-    public RoomServiceImpl(RoomRepository roomRepository) {
+    public RoomServiceImpl(RoomRepository roomRepository, ReservationRepository reservationRepository) {
         this.roomRepository = roomRepository;
+        this.reservationRepository = reservationRepository;
     }
 
     @Override
@@ -45,4 +49,27 @@ public class RoomServiceImpl implements RoomService {
     public void deleteByRoomNo(int no) {
         roomRepository.deleteById(no);
     }
+
+    @Override
+    public List<Room> findAvail(Date in, Date out) {
+
+        List<Reservation> reservations = reservationRepository.findAll();
+
+        // all room numbers
+        Set<Integer> ids = roomRepository.findAllRoomNo();
+
+        for (Reservation r : reservations) {
+            if (out.compareTo(r.getCheckIn()) > 0 && in.compareTo(r.getCheckOut()) < 0) {
+                Integer roomNo = r.getRoom().getRoomNo();
+
+                // remove room number if one of the reservations date coincides with new one
+                if (ids.contains(r.getRoom().getRoomNo())) {
+                    ids.remove(roomNo);
+                }
+            }
+        }
+
+        return roomRepository.findAllById(ids);
+    }
 }
+

@@ -8,14 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
-    
+
     // add a reference to security data source
     @Autowired
     @Qualifier("securityDataSource")
@@ -35,9 +34,13 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/rooms/showFormFor*",
-                                                    "/rooms/save",
-                                                    "/rooms/delete").hasRole("ADMIN")
-                        .requestMatchers("/rooms/reservations/**").hasRole("MANAGER")
+                                "/rooms/save",
+                                "/rooms/delete").hasRole("ADMIN")
+                        .requestMatchers("rooms/reservations/delete",
+                                "rooms/reservations/list").hasRole("MANAGER")
+                        .requestMatchers("rooms/reservations/save",
+                                "rooms/reservations/search*",
+                                "rooms/reservations/showFormFor*").hasAnyRole("MANAGER", "EMPLOYEE")
                         .requestMatchers("/", "/home", "/rooms/**").permitAll()
                         .anyRequest().authenticated()
                 )

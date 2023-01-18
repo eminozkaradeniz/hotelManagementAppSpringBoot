@@ -40,12 +40,24 @@ public class ReservationController {
         return "rooms/reservations/list-reservations";
     }
 
-    @GetMapping("/showFormForAdd")
+    @RequestMapping(value = "/showFormForAdd", method = RequestMethod.GET, params = {"roomNo"})
     public String showFormForAdd(@RequestParam("roomNo") int roomNo, Model model) {
 
         Reservation reservation = new Reservation();
         reservation.setCheckIn(Date.valueOf(LocalDate.now()));
         reservation.setCheckOut(Date.valueOf(LocalDate.now().plusDays(1)));
+        reservation.setRoom(roomService.findByRoomNo(roomNo));
+
+        model.addAttribute("reservation", reservation);
+        return "rooms/reservations/reservation-form-add";
+    }
+
+    @RequestMapping(value = "/showFormForAdd", method = RequestMethod.GET, params = {"roomNo", "searchDate"})
+    public String showFormForAdd(@RequestParam("roomNo") int roomNo, @RequestParam("searchDate") Date out, Model model) {
+
+        Reservation reservation = new Reservation();
+        reservation.setCheckIn(Date.valueOf(LocalDate.now()));
+        reservation.setCheckOut(out);
         reservation.setRoom(roomService.findByRoomNo(roomNo));
 
         model.addAttribute("reservation", reservation);
