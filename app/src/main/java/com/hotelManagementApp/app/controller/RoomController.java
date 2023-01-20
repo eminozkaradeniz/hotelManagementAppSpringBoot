@@ -2,9 +2,11 @@ package com.hotelManagementApp.app.controller;
 
 import com.hotelManagementApp.app.entity.Room;
 import com.hotelManagementApp.app.service.RoomService;
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
@@ -82,7 +84,7 @@ public class RoomController {
 
         model.addAttribute("room", room);
 
-        return "rooms/room-form-add";
+        return "rooms/room-form";
 
     }
 
@@ -93,15 +95,22 @@ public class RoomController {
 
         model.addAttribute("room", room);
 
-        return "rooms/room-form-update";
+        return "rooms/room-form";
     }
 
     @PostMapping("/save")
-    public String saveRoom(@ModelAttribute("room") Room room) {
-        roomService.save(room);
+    public String saveRoom(@ModelAttribute("room") @Valid Room room, BindingResult bindingResult) {
 
-        // using redirect to prevent duplicate submissions
-        return "redirect:/rooms/list";
+        if (bindingResult.hasErrors()) {
+            return "rooms/room-form";
+        } else {
+            // save the room
+            roomService.save(room);
+
+            // use a redirect to prevent duplicate submissions
+            return "redirect:/rooms/list";
+        }
+
     }
 
     @GetMapping("/delete")

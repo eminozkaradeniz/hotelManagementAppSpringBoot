@@ -1,6 +1,8 @@
 package com.hotelManagementApp.app.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -10,18 +12,21 @@ public class Room {
 
     @Id
     @Column(name = "no")
+    @NotNull(message = "is required")
     private Integer roomNo;
 
     @Column(name = "type")
+    @NotBlank(message = "is required")
     private String roomType;
 
     @Column(name = "price")
+    @NotNull(message = "is required")
     private Float price;
 
     @OneToMany( fetch = FetchType.LAZY,
-                mappedBy = "room",
-                cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-                            CascadeType.DETACH, CascadeType.REFRESH})
+            mappedBy = "room",
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
     private List<Reservation> reservations;
 
     public Room() {
