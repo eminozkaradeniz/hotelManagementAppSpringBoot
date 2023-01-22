@@ -1,69 +1,80 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6" 
+	  xmlns="http://www.w3.org/1999/html">
+	  
 <head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-
-  <title>Reservation Form</title>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+		integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+		
+	<title>Reservation Directory</title>
 </head>
-
+	
 <body>
+    <div class="container">
+	<hr>
+	<h3 for="logout" style="float:left;">Room No: <span th:text="${roomNo}"></span></h3>
 
-<div class="container">
-  <hr>
-  <h3 class="h4 mb-4">Reservation Directory</h3>
-  <hr>
+	<!-- Add a logout button -->
+	<span style="display: flex; overflow:hidden; justify-content:right;">
+        <form name="logout" id="logout" th:action="@{/logout}" method="POST">
+			<input type="submit" value="Logout"/>
+        </form>
+    </span>
+	<hr>
+	
+	<a th:href="@{/rooms/list}">Back to Room Directory</a>
+	<hr>
+	
+	<div sec:authorize="hasAnyRole('ROLE_MANAGER')">
+		<a th:href="@{/rooms/reservations/showFormForAdd(roomNo=${roomNo})}"
+			class="btn btn-primary btn-sm mb-3">
+		Make Reservation
+		</a>
+		<hr>
+	</div>
 
+	<table class="table table-bordered table-striped">
+	
+		<thead class="thead-dark">
+			<tr>
+				<th>Id</th>
+				<th>Customer</th>
+				<th>Check In</th>
+				<th>Check Out</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr th:each="tempRes : ${reservations}">
+				<td th:text="${tempRes.resId}" />
+				<td th:text="${tempRes.customer}" />
+				<td th:text="${tempRes.checkIn}" />
+				<td th:text="${tempRes.checkOut}" />
+				<td>
+					<!-- Add "update" button -->
+					<a th:href="@{/rooms/reservations/showFormForUpdate(resId=${tempRes.resId})}"
+						class="btn btn-info btn-sm">
+					  Update
+					</a>
 
-  <p class="h4 mb-4">Reservation Form</p>
-
-  <form action="#" th:action="@{/rooms/reservations/save}"
-        th:object="${reservation}" method="POST">
-
-    <!-- Add hidden field for handling update -->
-    <input type="hidden" th:field="*{resId}"/>
-
-    <div class="form-inline">
-      <input type="text" th:field="*{customer}" class="form-control mb-4 col-4" placeholder="Customer name"/>
-
-      <!-- Add error message if present -->
-      <span th:if="${#fields.hasErrors('customer')}" th:errors="*{customer}" class="badge badge-danger m1-2 mb-4"></span>
+					<!-- Add "cancel" button for ROLE_MANAGER -->
+					<div sec:authorize="hasAnyRole('ROLE_MANAGER')">
+						<a th:href="@{/rooms/reservations/delete(resId=${tempRes.resId},roomNo=${roomNo})}" 
+							class="btn btn-danger btn-sm" 
+							onclick="if (!(confirm('Are you sure you want to cancel this reservation?'))) return false">
+                          Cancel
+						</a>
+					</div>
+				</td>
+			</tr>
+	  </tbody>
+	</table>
     </div>
-
-    <div class="form-inline">
-      <input type="text" th:field="*{checkIn}" class="form-control mb-4 col-4" placeholder="Check In Date">
-
-      <!-- Add error message if present -->
-      <span th:if="${#fields.hasErrors('checkIn')}" th:errors="*{checkIn}" class="badge badge-danger m1-2 mb-4"></span>
-    </div>
-
-    <div class="form-inline">
-      <input type="text" th:field="*{checkOut}" class="form-control mb-4 col-4" placeholder="Check Out Date">
-
-      <!-- Add error message if present -->
-      <span th:if="${#fields.hasErrors('checkOut')}" th:errors="*{checkOut}" class="badge badge-danger m1-2 mb-4"></span>
-    </div>
-
-    <div class="form-inline">
-      <input type="text" th:field="*{room}" class="form-control mb-4 col-4" placeholder="Room No">
-
-      <!-- Add error message if present -->
-      <span th:if="${#fields.hasErrors('room')}" th:errors="*{room}" class="badge badge-danger m1-2 mb-4"></span>
-    </div>
-
-    <button type="submit" class="btn btn-info col-2">Save</button>
-
-  </form>
-
-  <hr>
-  <a th:href="@{/rooms/reservations/list(roomNo=${reservation.room.roomNo})}">Back to Reservations List</a>
-
-</div>
 </body>
-
-</html>
