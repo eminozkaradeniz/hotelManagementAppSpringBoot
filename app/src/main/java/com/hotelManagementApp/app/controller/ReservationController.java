@@ -4,8 +4,12 @@ import com.hotelManagementApp.app.entity.Reservation;
 import com.hotelManagementApp.app.entity.Room;
 import com.hotelManagementApp.app.service.ReservationService;
 import com.hotelManagementApp.app.service.RoomService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -49,7 +53,7 @@ public class ReservationController {
         reservation.setRoom(roomService.findByRoomNo(roomNo));
 
         model.addAttribute("reservation", reservation);
-        return "rooms/reservations/reservation-form-add";
+        return "rooms/reservations/reservation-form";
     }
 
     @RequestMapping(value = "/showFormForAdd", method = RequestMethod.GET, params = {"roomNo", "searchDate"})
@@ -61,7 +65,7 @@ public class ReservationController {
         reservation.setRoom(roomService.findByRoomNo(roomNo));
 
         model.addAttribute("reservation", reservation);
-        return "rooms/reservations/reservation-form-add";
+        return "rooms/reservations/reservation-form";
     }
 
     @GetMapping("/showFormForUpdate")
@@ -71,18 +75,25 @@ public class ReservationController {
 
         model.addAttribute("reservation", reservation);
 
-        return "rooms/reservations/reservation-form-update";
+        return "rooms/reservations/reservation-form";
     }
 
     @PostMapping("/save")
-    public String saveReservation(@ModelAttribute("reservation") Reservation reservation,
+    public String saveReservation(@ModelAttribute("reservation") @Valid Reservation reservation,
+                                  BindingResult bindingResult,
                                   RedirectAttributes redirectAttributes) {
 
-        reservationService.save(reservation);
+        if (bindingResult.hasErrors()) {
+            return "rooms/reservations/reservation-form";
+        }
+        else {
+            // save the reservation
+            reservationService.save(reservation);
+            // using redirect to prevent duplicate submissions
+            redirectAttributes.addAttribute("roomNo", reservation.getRoom().getRoomNo());
+            return "redirect:/rooms/reservations/list";
+        }
 
-        // using redirect to prevent duplicate submissions
-        redirectAttributes.addAttribute("roomNo", reservation.getRoom().getRoomNo());
-        return "redirect:/rooms/reservations/list";
     }
 
     @GetMapping("/delete")

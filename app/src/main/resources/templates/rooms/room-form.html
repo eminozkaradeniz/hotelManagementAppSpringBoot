@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
   <title>Save Room</title>
 </head>
@@ -22,37 +23,28 @@
 
   <p class="h4 mb-4">Save Room</p>
 
-  <form action="#" th:action="@{/rooms/save}"
-        th:object="${room}" method="POST">
+  <form action="#" th:action="@{/rooms/save}" th:object="${room}" method="POST">
 
     <div class="form-inline">
-      <input type="text" th:field="*{roomNo}"
-             class="form-control mb-4 col-4" placeholder="Room No"/>
+      <input type="text" th:field="*{roomNo}" class="form-control mb-4 col-4" placeholder="Room No" />
 
       <!-- Add error message if present -->
-      <span th:if="${#fields.hasErrors('roomNo')}"
-            th:errors="*{roomNo}"
+      <span th:if="${#fields.hasErrors('roomNo')}" th:errors="*{roomNo}" class="badge badge-danger m1-2 mb-4"></span>
+    </div>
+
+    <div class="form-inline">
+      <input type="text" th:field="*{roomType}" class="form-control mb-4 col-4" placeholder="Room type">
+
+      <!-- Add error message if present -->
+      <span th:if="${#fields.hasErrors('roomType')}" th:errors="*{roomType}"
             class="badge badge-danger m1-2 mb-4"></span>
     </div>
 
     <div class="form-inline">
-      <input type="text" th:field="*{roomType}"
-             class="form-control mb-4 col-4" placeholder="Room type">
+      <input type="text" th:field="*{price}" class="form-control mb-4 col-4" placeholder="Price">
 
       <!-- Add error message if present -->
-      <span th:if="${#fields.hasErrors('roomType')}"
-            th:errors="*{roomType}"
-            class="badge badge-danger m1-2 mb-4"></span>
-    </div>
-
-    <div class="form-inline">
-      <input type="text" th:field="*{price}"
-             class="form-control mb-4 col-4" placeholder="Price">
-
-      <!-- Add error message if present -->
-      <span th:if="${#fields.hasErrors('price')}"
-            th:errors="*{price}"
-            class="badge badge-danger m1-2 mb-4"></span>
+      <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="badge badge-danger m1-2 mb-4"></span>
     </div>
 
     <button type="submit" class="btn btn-info col-2">Save</button>

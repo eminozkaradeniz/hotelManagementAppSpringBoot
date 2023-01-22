@@ -1,6 +1,8 @@
 package com.hotelManagementApp.app.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.sql.Date;
 
@@ -14,17 +16,21 @@ public class Reservation {
     private Integer resId;
 
     @Column(name = "customer")
+    @NotBlank(message = "is required")
     private String customer;
 
     @Column(name = "check_in")
+    @NotNull(message = "is required")
     private Date checkIn;
 
     @Column(name = "check_out")
+    @NotNull(message = "is required")
     private Date checkOut;
 
     @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "room_no", nullable = false)
+    @NotNull(message = "is required")
     private Room room;
 
     public Reservation() {
