@@ -41,13 +41,35 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void save(Room room) {
+    public boolean save(Room room) {
+
+        // if another room with same number exists than return false
+        if (roomRepository.existsById(room.getRoomNo())) {
+            return false;
+        }
+
+        // save the room
         roomRepository.save(room);
+        return true;
     }
 
     @Override
-    public void deleteByRoomNo(int no) {
-        roomRepository.deleteById(no);
+    public boolean deleteByRoomNo(int no) {
+
+        // get the room
+        Optional<Room> optionalRoom = roomRepository.findById(no);
+
+        if (optionalRoom.isPresent()){
+            Room room = optionalRoom.get();
+
+            // if room hasn't any reservations than delete the room
+            if (room.getReservations().isEmpty()){
+                roomRepository.delete(room);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

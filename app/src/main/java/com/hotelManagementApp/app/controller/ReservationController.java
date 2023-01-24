@@ -30,7 +30,7 @@ public class ReservationController {
     }
 
     @GetMapping("/list")
-    public String listReservations(@RequestParam("roomNo") Integer roomNo, Model model) {
+    public String listReservations(@RequestParam("roomNo") int roomNo, Model model) {
 
         Room room = roomService.findByRoomNo(roomNo);
 
@@ -53,9 +53,18 @@ public class ReservationController {
         reservation.setRoom(roomService.findByRoomNo(roomNo));
 
         model.addAttribute("reservation", reservation);
+        setReservationFormModel(model, false);
+
         return "rooms/reservations/reservation-form";
     }
 
+    /**
+     * Returns reservation form page based on role_employee's choice of searchDate
+     * @param roomNo    room no for reservation to be added
+     * @param out       check out date for reservation to be added
+     * @param model     springframework ui model for prepopulate the form
+     * @return          reservation page url
+     */
     @RequestMapping(value = "/showFormForAdd", method = RequestMethod.GET, params = {"roomNo", "searchDate"})
     public String showFormForAdd(@RequestParam("roomNo") int roomNo, @RequestParam("searchDate") Date out, Model model) {
 
@@ -65,6 +74,8 @@ public class ReservationController {
         reservation.setRoom(roomService.findByRoomNo(roomNo));
 
         model.addAttribute("reservation", reservation);
+        setReservationFormModel(model, true);
+
         return "rooms/reservations/reservation-form";
     }
 
@@ -74,6 +85,7 @@ public class ReservationController {
         Reservation reservation = reservationService.findById(resId);
 
         model.addAttribute("reservation", reservation);
+        setReservationFormModel(model, false);
 
         return "rooms/reservations/reservation-form";
     }
@@ -104,6 +116,12 @@ public class ReservationController {
 
         redirectAttributes.addAttribute("roomNo", roomNo);
         return "redirect:/rooms/reservations/list";
+    }
+
+    public void setReservationFormModel(Model model, boolean dateFieldReadonly) {
+        model.addAttribute("minCheckInDate", Date.valueOf(LocalDate.now()));
+        model.addAttribute("minCheckOutDate", Date.valueOf(LocalDate.now().plusDays(1)));
+        model.addAttribute("dateReadonly", dateFieldReadonly);
     }
 
 }

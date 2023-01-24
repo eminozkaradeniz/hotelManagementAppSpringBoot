@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6" xmlns="http://www.w3.org/1999/html">
 
 <head>
   <!-- Required meta tags -->
@@ -33,30 +34,30 @@
 
       <!-- Add error message if present -->
       <span th:if="${#fields.hasErrors('customer')}" th:errors="*{customer}"
-            class="badge badge-danger m1-2 mb-4"></span>
+          class="badge badge-danger m1-2 mb-4"></span>
     </div>
 
     <div class="form-inline">
-      <input type="text" th:field="*{checkIn}" class="form-control mb-4 col-4" placeholder="Check In Date">
+      <input type="date" th:field="*{checkIn}" th:min="${minCheckInDate}" th:value="${reservation.checkIn}"
+             class="form-control mb-4 col-4" th:readonly="${dateReadonly}"/>
 
       <!-- Add error message if present -->
       <span th:if="${#fields.hasErrors('checkIn')}" th:errors="*{checkIn}"
-            class="badge badge-danger m1-2 mb-4"></span>
+          class="badge badge-danger m1-2 mb-4"></span>
     </div>
 
     <div class="form-inline">
-      <input type="text" th:field="*{checkOut}" class="form-control mb-4 col-4" placeholder="Check Out Date">
+
+      <input type="date" th:field="*{checkOut}" th:min="${minCheckOutDate}" th:value="${reservation.checkOut}"
+          class="form-control mb-4 col-4" th:readonly="${dateReadonly}"/>
 
       <!-- Add error message if present -->
       <span th:if="${#fields.hasErrors('checkOut')}" th:errors="*{checkOut}"
-            class="badge badge-danger m1-2 mb-4"></span>
+          class="badge badge-danger m1-2 mb-4"></span>
     </div>
 
     <div class="form-inline">
-      <input type="text" th:field="*{room}" class="form-control mb-4 col-4" placeholder="Room No">
-
-      <!-- Add error message if present -->
-      <span th:if="${#fields.hasErrors('room')}" th:errors="*{room}" class="badge badge-danger m1-2 mb-4"></span>
+      <input type="text" th:field="*{room}" class="form-control mb-4 col-4" placeholder="Room No" readonly>
     </div>
 
     <button type="submit" class="btn btn-info col-2">Save</button>
@@ -64,7 +65,10 @@
   </form>
 
   <hr>
-  <a th:href="@{/rooms/reservations/list(roomNo=${reservation.room.roomNo})}">Back to Reservations List</a>
+  <div sec:authorize="hasAnyRole('ROLE_MANAGER')">
+    <a th:href="@{/rooms/reservations/list(roomNo=${reservation.room.roomNo})}">Back to Reservations List</a>
+  </div>
+  <a th:href="@{/rooms/list}">Back to Room Directory</a>
 
 </div>
 </body>

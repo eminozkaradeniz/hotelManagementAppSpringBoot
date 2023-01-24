@@ -26,7 +26,7 @@
             <form name="logout" id="logout" th:action="@{/logout}" method="POST">
                 <input type="submit" value="Logout" />
             </form>
-        </span>
+    </span>
 
     <hr>
 
@@ -34,11 +34,10 @@
         User: <span sec:authentication="name"></span>
         <br>
         Role(s): <span sec:authentication="principal.authorities"></span>
-        <br>
+        <hr>
         Current Date: <span th:text="${currDate}"></span>
+        <hr>
     </div>
-
-    <hr>
 
     <!-- Add room button for ROLE_ADMIN -->
     <div sec:authorize="hasAnyRole('ROLE_ADMIN')">
@@ -48,6 +47,12 @@
         <hr>
     </div>
 
+    <!-- ALERTS -->
+    <div class="alert alert-primary" role="alert" th:text="${roomSaveSuccess}" th:if="${roomSaveSuccess}"></div>
+    <div class="alert alert-primary" role="alert" th:text="${roomDeleteSuccess}" th:if="${roomDeleteSuccess}"></div>
+    <div class="alert alert-danger" role="alert" th:text="${roomDeleteFail}" th:if="${roomDeleteFail}"></div>
+
+    <!-- Search rooms form for ROLE_EMPLOYEE -->
     <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE')">
 
         <form action="#" th:action="@{/rooms/searchAvailableRooms}" method="GET">
@@ -60,6 +65,7 @@
             </div>
         </form>
 
+        <hr>
         <h4>Available Rooms</h4>
         <hr>
 
@@ -85,6 +91,7 @@
 
             <td>
                 <div sec:authorize="hasAnyRole('ROLE_ADMIN')">
+
                     <!-- Add "update" button for ROLE_ADMIN -->
                     <a th:href="@{/rooms/showFormForUpdate(roomNo=${tempRoom.roomNo})}"
                        class="btn btn-info btn-sm">
@@ -108,7 +115,7 @@
 
                 <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE')">
                     <!-- Add "Make Reservation" button for ROLE_EMPLOYEE -->
-                    <a th:href="@{/rooms/reservations/showFormForAdd(roomNo=${tempRoom.roomNo})}"
+                    <a th:href="@{/rooms/reservations/showFormForAdd(roomNo=${tempRoom.roomNo}, searchDate=${searchValueDate})}"
                        class="btn btn-info btn-sm">
                         Make Reservation
                     </a>

@@ -9,7 +9,7 @@ public interface RoomService {
 
     public List<Room> findAll();
     public Room findByRoomNo(int no);
-    public void save(Room room);
-    public void deleteByRoomNo(int no);
+    public boolean save(Room room);
+    public boolean deleteByRoomNo(int no);
     public List<Room> findAvail(Date in, Date out);
 }

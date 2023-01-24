@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -34,7 +35,7 @@ public class RoomController {
             System.out.println("The User is an employee");
 
             // default searchDate
-            Date out = Date.valueOf(LocalDate.now().plusDays(2));
+            Date out = Date.valueOf(LocalDate.now().plusDays(1));
 
             setEmployeeSearchModel(out, model);
 
@@ -99,24 +100,39 @@ public class RoomController {
     }
 
     @PostMapping("/save")
-    public String saveRoom(@ModelAttribute("room") @Valid Room room, BindingResult bindingResult) {
+    public String saveRoom(@ModelAttribute("room") @Valid Room room, BindingResult bindingResult,
+                           RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             return "rooms/room-form";
         } else {
-            // save the room
-            roomService.save(room);
 
-            // use a redirect to prevent duplicate submissions
-            return "redirect:/rooms/list";
+            if (roomService.save(room)) {
+                redirectAttributes.addFlashAttribute("roomSaveSuccess",
+                        "Room is saved successfully.");
+
+                // use a redirect to prevent duplicate submissions
+                return "redirect:/rooms/list";
+            } else {
+                redirectAttributes.addFlashAttribute("roomSaveFail",
+                        "Room can not be saved. There is another room with the same number.");
+
+                // redirect to form to alert the error
+                return "redirect:/rooms/showFormForAdd";
+            }
         }
-
     }
 
     @GetMapping("/delete")
-    public String delete(@RequestParam("roomNo") int roomNo) {
+    public String delete(@RequestParam("roomNo") int roomNo, RedirectAttributes redirectAttributes) {
 
-        roomService.deleteByRoomNo(roomNo);
+        if (roomService.deleteByRoomNo(roomNo)) {
+            redirectAttributes.addFlashAttribute("roomDeleteSuccess",
+                    "Room is deleted successfully.");
+        } else {
+            redirectAttributes.addFlashAttribute("roomDeleteFail",
+                    "This room can not be deleted.");
+        }
 
         // redirect to /rooms/list
         return "redirect:/rooms/list";
