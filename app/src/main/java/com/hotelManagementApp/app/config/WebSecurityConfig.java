@@ -33,11 +33,12 @@ public class WebSecurityConfig {
                         .requestMatchers("/rooms/showFormFor*",
                                 "/rooms/save",
                                 "/rooms/delete").hasRole("ADMIN")
-                        .requestMatchers("rooms/reservations/delete",
-                                "rooms/reservations/list").hasRole("MANAGER")
-                        .requestMatchers("rooms/reservations/save",
-                                "rooms/reservations/search*",
-                                "rooms/reservations/showFormFor*").hasAnyRole("MANAGER", "EMPLOYEE")
+                        .requestMatchers("/rooms/reservations/delete",
+                                "/rooms/reservations/list",
+								"/rooms/reservations/showFormForUpdate").hasRole("MANAGER")
+                        .requestMatchers("/rooms/reservations/save",
+                                "/rooms/reservations/search*",
+                                "/rooms/reservations/showFormForAdd").hasAnyRole("MANAGER", "EMPLOYEE")
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()
                 )
