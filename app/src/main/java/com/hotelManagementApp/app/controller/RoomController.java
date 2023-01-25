@@ -32,8 +32,6 @@ public class RoomController {
                 .map(Object::toString)
                 .anyMatch(s -> (s.equals("ROLE_EMPLOYEE")))) {
 
-            System.out.println("The User is an employee");
-
             // default searchDate
             Date out = Date.valueOf(LocalDate.now().plusDays(1));
 
@@ -57,7 +55,7 @@ public class RoomController {
         // check in date is current date for employee
         Date in = Date.valueOf(LocalDate.now());
         System.out.println(searchDate.toString());
-        List<Room> availRooms = roomService.findAvail(in, searchDate);
+        List<Room> availRooms = roomService.findAllBookableRooms(in, searchDate);
 
         // add to the spring ui model
         theModel.addAttribute("rooms", availRooms);

@@ -23,8 +23,11 @@
 
 
   <p class="h4 mb-4">Reservation Form</p>
+  <hr>
 
-  <form action="#" th:action="@{/rooms/reservations/save}" th:object="${reservation}" method="POST">
+  <div class="alert alert-danger" role="alert" th:text="${notBookable}" th:if="${notBookable}"></div>
+
+  <form action="#" th:action="@{/rooms/reservations/save(isUpdate=${isUpdate})}" th:object="${reservation}" method="POST">
 
     <!-- Add hidden field for handling update -->
     <input type="hidden" th:field="*{resId}" />
@@ -34,7 +37,7 @@
 
       <!-- Add error message if present -->
       <span th:if="${#fields.hasErrors('customer')}" th:errors="*{customer}"
-          class="badge badge-danger m1-2 mb-4"></span>
+            class="badge badge-danger m1-2 mb-4"></span>
     </div>
 
     <div class="form-inline">
@@ -43,21 +46,22 @@
 
       <!-- Add error message if present -->
       <span th:if="${#fields.hasErrors('checkIn')}" th:errors="*{checkIn}"
-          class="badge badge-danger m1-2 mb-4"></span>
+            class="badge badge-danger m1-2 mb-4"></span>
     </div>
 
     <div class="form-inline">
 
       <input type="date" th:field="*{checkOut}" th:min="${minCheckOutDate}" th:value="${reservation.checkOut}"
-          class="form-control mb-4 col-4" th:readonly="${dateReadonly}"/>
+             class="form-control mb-4 col-4" th:readonly="${dateReadonly}"/>
 
       <!-- Add error message if present -->
       <span th:if="${#fields.hasErrors('checkOut')}" th:errors="*{checkOut}"
-          class="badge badge-danger m1-2 mb-4"></span>
+            class="badge badge-danger m1-2 mb-4"></span>
     </div>
 
     <div class="form-inline">
-      <input type="text" th:field="*{room}" class="form-control mb-4 col-4" placeholder="Room No" readonly>
+      <input type="text" th:field="*{room}" class="form-control mb-4 col-4"
+             placeholder="Room No" th:readonly="${dateReadonly}">
     </div>
 
     <button type="submit" class="btn btn-info col-2">Save</button>

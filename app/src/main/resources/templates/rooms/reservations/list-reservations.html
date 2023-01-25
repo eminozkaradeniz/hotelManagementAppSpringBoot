@@ -1,22 +1,22 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6" 
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
 	  xmlns="http://www.w3.org/1999/html">
-	  
+
 <head>
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	
+
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-		integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-		
+		  integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
 	<title>Reservation Directory</title>
 </head>
-	
+
 <body>
-    <div class="container">
+<div class="container">
 	<hr>
 	<h3 for="logout" style="float:left;">Room No: <span th:text="${roomNo}"></span></h3>
 
@@ -27,54 +27,55 @@
         </form>
     </span>
 	<hr>
-	
+
 	<a th:href="@{/rooms/list}">Back to Room Directory</a>
 	<hr>
-	
+
 	<div sec:authorize="hasAnyRole('ROLE_MANAGER')">
 		<a th:href="@{/rooms/reservations/showFormForAdd(roomNo=${roomNo})}"
-			class="btn btn-primary btn-sm mb-3">
+		   class="btn btn-primary btn-sm mb-3">
 			Make Reservation
 		</a>
 		<hr>
 	</div>
 
 	<table class="table table-bordered table-striped">
-	
+
 		<thead class="thead-dark">
-			<tr>
-				<th>Id</th>
-				<th>Customer</th>
-				<th>Check In</th>
-				<th>Check Out</th>
-				<th>Action</th>
-			</tr>
+		<tr>
+			<th>Id</th>
+			<th>Customer</th>
+			<th>Check In</th>
+			<th>Check Out</th>
+			<div sec:authorize="hasAnyRole('ROLE_MANAGER')"><th>Action</th></div>
+		</tr>
 		</thead>
-		
+
 		<tbody>
-			<tr th:each="tempRes : ${reservations}">
-				<td th:text="${tempRes.resId}" />
-				<td th:text="${tempRes.customer}" />
-				<td th:text="${tempRes.checkIn}" />
-				<td th:text="${tempRes.checkOut}" />
+		<tr th:each="tempRes : ${reservations}">
+			<td th:text="${tempRes.resId}" />
+			<td th:text="${tempRes.customer}" />
+			<td th:text="${tempRes.checkIn}" />
+			<td th:text="${tempRes.checkOut}" />
+
+			<div sec:authorize="hasAnyRole('ROLE_MANAGER')">
 				<td>
 					<!-- Add "update" button -->
 					<a th:href="@{/rooms/reservations/showFormForUpdate(resId=${tempRes.resId})}"
-						class="btn btn-info btn-sm">
-					  Update
+					   class="btn btn-info btn-sm">
+						Update
 					</a>
 
-					<!-- Add "cancel" button for ROLE_MANAGER -->
-					<div sec:authorize="hasAnyRole('ROLE_MANAGER')">
-						<a th:href="@{/rooms/reservations/delete(resId=${tempRes.resId},roomNo=${roomNo})}" 
-							class="btn btn-danger btn-sm" 
-							onclick="if (!(confirm('Are you sure you want to cancel this reservation?'))) return false">
-                          Cancel
-						</a>
-					</div>
+					<!-- Add "cancel" button -->
+					<a th:href="@{/rooms/reservations/delete(resId=${tempRes.resId},roomNo=${roomNo})}"
+					   class="btn btn-danger btn-sm"
+					   onclick="if (!(confirm('Are you sure you want to cancel this reservation?'))) return false">
+						Cancel
+					</a>
 				</td>
-			</tr>
-	  </tbody>
+			</div>
+		</tr>
+		</tbody>
 	</table>
-    </div>
+</div>
 </body>

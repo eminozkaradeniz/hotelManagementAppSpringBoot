@@ -8,7 +8,7 @@ import java.sql.Date;
 
 @Entity
 @Table(name = "reservation")
-public class Reservation {
+public class Reservation implements Comparable<Reservation> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -97,5 +97,17 @@ public class Reservation {
                 ", checkIn=" + checkIn +
                 ", checkOut=" + checkOut +
                 '}';
+    }
+
+    /**
+     * @param r the reservation object to be compared.
+     * @return -1 if reservations dates coincides with each other , else return 0
+     */
+    @Override
+    public int compareTo(Reservation r) {
+        if (r.checkOut.after(checkIn) && r.checkIn.before(checkOut)) {
+            return -1;
+        }
+        return 0;
     }
 }

@@ -19,7 +19,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public List<Reservation> findByRoom(Room room) {
-        return reservationRepository.findByRoom(room);
+        return reservationRepository.findByRoomOrderByCheckIn(room);
     }
 
     @Override

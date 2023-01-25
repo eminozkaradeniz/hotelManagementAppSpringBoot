@@ -7,9 +7,11 @@ import com.hotelManagementApp.app.entity.Room;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -73,25 +75,25 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Room> findAvail(Date in, Date out) {
+    public List<Room> findAllBookableRooms(Date in, Date out) {
 
-        List<Reservation> reservations = reservationRepository.findAll();
+        // get and return all bookable rooms
+        return roomRepository.findAllByOrderByRoomNoAsc().stream()
+                .filter(r -> isBookable(r, in, out)).toList();
+    }
+    public boolean isBookable(Room room, Date in, Date out) {
+        return isBookable(room, new Reservation("", in, out));
+    }
 
-        // all room numbers
-        Set<Integer> ids = roomRepository.findAllRoomNo();
-
-        for (Reservation r : reservations) {
-            if (out.compareTo(r.getCheckIn()) > 0 && in.compareTo(r.getCheckOut()) < 0) {
-                Integer roomNo = r.getRoom().getRoomNo();
-
-                // remove room number if one of the reservations date coincides with new one
-                if (ids.contains(r.getRoom().getRoomNo())) {
-                    ids.remove(roomNo);
-                }
+    @Override
+    public boolean isBookable(Room room, Reservation newReservation) {
+        List<Reservation> reservations = room.getReservations();
+        for (Reservation r: reservations) {
+            if (r.compareTo(newReservation) < 0) {
+                return false;
             }
         }
-
-        return roomRepository.findAllById(ids);
+        return true;
     }
 }
 

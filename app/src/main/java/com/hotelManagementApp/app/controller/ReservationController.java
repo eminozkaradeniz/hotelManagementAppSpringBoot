@@ -53,6 +53,7 @@ public class ReservationController {
         reservation.setRoom(roomService.findByRoomNo(roomNo));
 
         model.addAttribute("reservation", reservation);
+        model.addAttribute("isUpdate", false);
         setReservationFormModel(model, false);
 
         return "rooms/reservations/reservation-form";
@@ -74,17 +75,19 @@ public class ReservationController {
         reservation.setRoom(roomService.findByRoomNo(roomNo));
 
         model.addAttribute("reservation", reservation);
+        model.addAttribute("isUpdate", false);
         setReservationFormModel(model, true);
 
         return "rooms/reservations/reservation-form";
     }
 
-    @GetMapping("/showFormForUpdate")
+    @RequestMapping(value = "/showFormForUpdate", method = RequestMethod.GET, params = {"resId"})
     public String showFormForUpdate(@RequestParam("resId") int resId, Model model) {
 
         Reservation reservation = reservationService.findById(resId);
 
         model.addAttribute("reservation", reservation);
+        model.addAttribute("isUpdate", true);
         setReservationFormModel(model, false);
 
         return "rooms/reservations/reservation-form";
@@ -92,6 +95,7 @@ public class ReservationController {
 
     @PostMapping("/save")
     public String saveReservation(@ModelAttribute("reservation") @Valid Reservation reservation,
+                                  @RequestParam("isUpdate") boolean isUpdate,
                                   BindingResult bindingResult,
                                   RedirectAttributes redirectAttributes) {
 
@@ -99,13 +103,31 @@ public class ReservationController {
             return "rooms/reservations/reservation-form";
         }
         else {
-            // save the reservation
-            reservationService.save(reservation);
-            // using redirect to prevent duplicate submissions
-            redirectAttributes.addAttribute("roomNo", reservation.getRoom().getRoomNo());
-            return "redirect:/rooms/reservations/list";
-        }
 
+            // check if room is bookable between checkin and checkout dates
+            if (roomService.isBookable(reservation.getRoom(), reservation)) {
+
+                // save the reservation
+                reservationService.save(reservation);
+
+                // using redirect to prevent duplicate submissions
+                redirectAttributes.addAttribute("roomNo", reservation.getRoom().getRoomNo());
+                return "redirect:/rooms/reservations/list";
+            } else {
+
+                redirectAttributes.addFlashAttribute("notBookable",
+                        String.format("Room %d is not bookable between these dates",
+                                reservation.getRoom().getRoomNo()));
+
+                if (isUpdate) {
+                    redirectAttributes.addAttribute("resId", reservation.getResId());
+                    return "redirect:/rooms/reservations/showFormForUpdate";
+                } else {
+                    redirectAttributes.addAttribute("roomNo", reservation.getRoom().getRoomNo());
+                    return "redirect:/rooms/reservations/showFormForAdd";
+                }
+            }
+        }
     }
 
     @GetMapping("/delete")
