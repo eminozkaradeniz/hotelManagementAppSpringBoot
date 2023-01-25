@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.sql.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "reservation")
@@ -27,8 +28,7 @@ public class Reservation implements Comparable<Reservation> {
     @NotNull(message = "is required")
     private Date checkOut;
 
-    @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "room_no", nullable = false)
     @NotNull(message = "is required")
     private Room room;
@@ -105,6 +105,10 @@ public class Reservation implements Comparable<Reservation> {
      */
     @Override
     public int compareTo(Reservation r) {
+        // return 1 if ids are the same
+        if (Objects.equals(resId, r.resId)) {
+            return 1;
+        }
         if (r.checkOut.after(checkIn) && r.checkIn.before(checkOut)) {
             return -1;
         }
