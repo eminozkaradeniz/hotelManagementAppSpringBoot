@@ -1,27 +1,21 @@
 package com.hotelManagementApp.app.service;
 
-import com.hotelManagementApp.app.dao.ReservationRepository;
 import com.hotelManagementApp.app.dao.RoomRepository;
 import com.hotelManagementApp.app.entity.Reservation;
 import com.hotelManagementApp.app.entity.Room;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class RoomServiceImpl implements RoomService {
 
     private RoomRepository roomRepository;
-    private ReservationRepository reservationRepository;
 
-    public RoomServiceImpl(RoomRepository roomRepository, ReservationRepository reservationRepository) {
+    public RoomServiceImpl(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
-        this.reservationRepository = reservationRepository;
     }
 
     @Override
@@ -81,6 +75,7 @@ public class RoomServiceImpl implements RoomService {
         return roomRepository.findAllByOrderByRoomNoAsc().stream()
                 .filter(r -> isBookable(r, in, out)).toList();
     }
+    
     public boolean isBookable(Room room, Date in, Date out) {
         return isBookable(room, new Reservation("", in, out));
     }
