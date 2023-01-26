@@ -2,11 +2,9 @@ package com.hotelManagementApp.app.controller;
 
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.Collection;
 
 @Controller
 public class HomeController {
@@ -15,16 +13,15 @@ public class HomeController {
     public String showHome(Authentication authentication) {
 
         // check if any user logged in
-        Collection<? extends GrantedAuthority> authorities = null;
-
+        String username = "";
         try {
-            authorities = authentication.getAuthorities();
+            username = authentication.getName();
         } catch (NullPointerException e) {
             System.out.println("No user logged in");
             return "login-page";
         }
 
-        System.out.println(authentication.getName() + " logged in.");
+        System.out.println(username + " logged in.");
 
         return "home";
     }

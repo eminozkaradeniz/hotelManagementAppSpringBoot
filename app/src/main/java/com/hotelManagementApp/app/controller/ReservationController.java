@@ -94,8 +94,8 @@ public class ReservationController {
     }
 
     @PostMapping("/save")
-    public String saveReservation(@ModelAttribute("reservation") @Valid Reservation reservation,
-                                  @RequestParam("isUpdate") boolean isUpdate,
+    public String saveReservation(@RequestParam("isUpdate") boolean isUpdate,
+                                  @ModelAttribute("reservation") @Valid Reservation reservation,
                                   BindingResult bindingResult,
                                   RedirectAttributes redirectAttributes) {
 

@@ -12,7 +12,7 @@ import java.util.Optional;
 @Service
 public class RoomServiceImpl implements RoomService {
 
-    private RoomRepository roomRepository;
+    private final RoomRepository roomRepository;
 
     public RoomServiceImpl(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
@@ -75,13 +75,19 @@ public class RoomServiceImpl implements RoomService {
         return roomRepository.findAllByOrderByRoomNoAsc().stream()
                 .filter(r -> isBookable(r, in, out)).toList();
     }
-    
+
     public boolean isBookable(Room room, Date in, Date out) {
         return isBookable(room, new Reservation("", in, out));
     }
 
     @Override
     public boolean isBookable(Room room, Reservation newReservation) {
+
+        // if check in after check out
+        if (newReservation.getCheckIn().compareTo(newReservation.getCheckOut()) >= 0) {
+            return false;
+        }
+
         List<Reservation> reservations = room.getReservations();
         for (Reservation r: reservations) {
             if (r.compareTo(newReservation) < 0) {

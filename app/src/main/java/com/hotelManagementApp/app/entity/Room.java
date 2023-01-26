@@ -1,6 +1,8 @@
 package com.hotelManagementApp.app.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -13,6 +15,8 @@ public class Room {
     @Id
     @Column(name = "no")
     @NotNull(message = "is required")
+    @Min(value = 1, message = "must be greater than 0")
+    @Max(value = 10001, message = "must be less than 10001")
     private Integer roomNo;
 
     @Column(name = "type")
