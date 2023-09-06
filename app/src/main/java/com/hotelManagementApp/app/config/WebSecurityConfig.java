@@ -11,20 +11,41 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Configuration class for defining web security settings using Spring Security<
+ * This class configures security-related behavior for various HTTP requests and user authentication.
+ */
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    // add a reference to security data source
+    /**
+     * Reference to the security data source used for user authentication and authorization.
+     * This data source is used to manage user details and roles for security purposes.
+     *
+     * @see javax.sql.DataSource
+     */
     @Autowired
     @Qualifier("securityDataSource")
     private DataSource securityDataSource;
 
+    /**
+     * Defines a bean for managing user details using a JDBC-backed implementation.
+     *
+     * @return The configured 'users' bean, which manages user details.
+     */
     @Bean
     public JdbcUserDetailsManager users() {
         return new JdbcUserDetailsManager(securityDataSource);
     }
 
+    /**
+     * Configures the security filter chain for handling HTTP requests.
+     *
+     * @param http the HttpSecurity object used to configure security filter and request authorizations.
+     * @return the configured security filter chain.
+     * @throws Exception If an exception occurs during configuration.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
