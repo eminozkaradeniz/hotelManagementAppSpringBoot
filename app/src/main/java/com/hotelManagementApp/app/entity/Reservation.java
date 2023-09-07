@@ -7,35 +7,65 @@ import jakarta.validation.constraints.NotNull;
 import java.sql.Date;
 import java.util.Objects;
 
+/**
+ * Represents a reservation entity in the hotel management application.
+ * Each reservation includes details such as the customer's name, check-in date, check-out date, and associated room.
+ */
 @Entity
 @Table(name = "reservation")
 public class Reservation implements Comparable<Reservation> {
 
+    /**
+     * Unique identifier for the reservation.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer resId;
 
+    /**
+     * The name of the customer associated with the reservation.
+     */
     @Column(name = "customer")
     @NotBlank(message = "is required")
     private String customer;
 
+    /**
+     * The check-in date for the reservation.
+     */
     @Column(name = "check_in")
     @NotNull(message = "is required")
     private Date checkIn;
 
+    /**
+     * The check-out date for the reservation.
+     */
     @Column(name = "check_out")
     @NotNull(message = "is required")
     private Date checkOut;
 
+    /**
+     * The room associated with the reservation.
+     * This is a many-to one relationship with the 'Room' entity.
+     */
     @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "room_no", nullable = false)
     @NotNull(message = "is required")
     private Room room;
 
+    /**
+     * Default constructor for the Reservation class.
+     */
     public Reservation() {
     }
 
+    /**
+     * Constructor with parameters for creating a reservation.
+     *
+     * @param customer The name of the customer making the reservation.
+     * @param checkIn  The check-in date for the reservation.
+     * @param checkOut The check-out date for the reservation.
+     */
     public Reservation(String customer, Date checkIn, Date checkOut) {
         this.customer = customer;
         this.checkIn = checkIn;
@@ -89,6 +119,11 @@ public class Reservation implements Comparable<Reservation> {
         this.room = room;
     }
 
+    /**
+     * Returns a string representation of the Reservation object.
+     *
+     * @return A string representation of the reservation object, including its fields.
+     */
     @Override
     public String toString() {
         return "Reservation{" +
@@ -100,8 +135,10 @@ public class Reservation implements Comparable<Reservation> {
     }
 
     /**
+     * Compares this reservation with another reservation to check for date conflicts.
+     *
      * @param r the reservation object to be compared.
-     * @return -1 if reservations dates coincides with each other , else return 0
+     * @return -1 if reservations dates coincide with each other; else returns 0
      */
     @Override
     public int compareTo(Reservation r) {
