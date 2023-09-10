@@ -138,17 +138,18 @@ public class Reservation implements Comparable<Reservation> {
      * Compares this reservation with another reservation to check for date conflicts.
      *
      * @param r the reservation object to be compared.
-     * @return -1 if reservations dates coincide with each other; else returns 0
+     * @return -1 if reservations dates coincide with each other; else returns 1
      */
     @Override
     public int compareTo(Reservation r) {
-        // return 1 if ids are the same
+        // return 0 if ids are the same
         if (Objects.equals(resId, r.resId)) {
-            return 1;
+            return 0;
         }
         if (r.checkOut.after(checkIn) && r.checkIn.before(checkOut)) {
             return -1;
+        } else {
+            return 1;
         }
-        return 0;
     }
 }

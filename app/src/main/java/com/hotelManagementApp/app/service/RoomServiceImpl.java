@@ -83,7 +83,6 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public boolean isBookable(Room room, Reservation newReservation) {
 
-        // if check in after check out
         if (newReservation.getCheckIn().compareTo(newReservation.getCheckOut()) >= 0) {
             return false;
         }
